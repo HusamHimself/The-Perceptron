@@ -4,8 +4,10 @@
 
 void displayBoard(bool board[4][4]);
 double calculatedSum(bool switches[4][4], double weights[4][4]);
-double learnFrom(bool switches[4][4], double weights[4][4], double learning_rate);
-double closeAllSwitches(double switches[4][4]);
+void learnFrom(bool switches[4][4], double weights[4][4], double learning_rate);
+void closeAllSwitches(double switches[4][4]);
+void makeFirstT(bool switches[4][4]);
+void makeSecondT(bool switches[4][4]);
 
 int main(){
     double learning_rate = 0.01;
@@ -19,10 +21,27 @@ int main(){
                             {0, 0, 0, 0}};
     
     displayBoard(switches);
-
 }
 
-double closeAllSwitches(double switches[4][4]){
+void makeSecondT(bool switches[4][4]){
+    switches[0][0] = true;
+    switches[0][2] = true;
+    switches[0][1] = true;
+    switches[1][1] = true;
+    switches[2][1] = true;
+    switches[3][1] = true;
+}
+
+void makeFirstT(bool switches[4][4]){
+    switches[0][3] = true;
+    switches[0][2] = true;
+    switches[0][1] = true;
+    switches[1][2] = true;
+    switches[2][2] = true;
+    switches[3][2] = true;
+}
+
+void closeAllSwitches(double switches[4][4]){
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             switches[i][j] = false;
@@ -30,7 +49,7 @@ double closeAllSwitches(double switches[4][4]){
     }
 }
 
-double learnFrom(bool switches[4][4], double weights[4][4], double learning_rate){
+void learnFrom(bool switches[4][4], double weights[4][4], double learning_rate){
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(switches[i][j] == true){
@@ -40,7 +59,6 @@ double learnFrom(bool switches[4][4], double weights[4][4], double learning_rate
             weights[i][j] -= learning_rate;
         }
     }
-    return weights[4][4];
 }
 
 double calculatedSum(bool switches[4][4], double weights[4][4]){
