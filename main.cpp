@@ -3,8 +3,9 @@
 //Thanks to welsh labs for writig a fascinating book.
 
 void displayBoard(bool board[4][4]);
-double calculateTotal(bool switches[4][4], double weights[4][4]);
+double calculatedSum(bool switches[4][4], double weights[4][4]);
 double learnFrom(bool switches[4][4], double weights[4][4], double learning_rate);
+double closeAllSwitches(double switches[4][4]);
 
 int main(){
     double learning_rate = 0.01;
@@ -21,6 +22,14 @@ int main(){
 
 }
 
+double closeAllSwitches(double switches[4][4]){
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            switches[i][j] = false;
+        }
+    }
+}
+
 double learnFrom(bool switches[4][4], double weights[4][4], double learning_rate){
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
@@ -31,17 +40,19 @@ double learnFrom(bool switches[4][4], double weights[4][4], double learning_rate
             weights[i][j] -= learning_rate;
         }
     }
+    return weights[4][4];
 }
 
-double calculateTotal(bool switches[4][4], double weights[4][4]){
-    double theSum = 0;
+double calculatedSum(bool switches[4][4], double weights[4][4]){
+    double the_sum = 0;
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(switches[i][j] == true){
-                theSum += switches[i][j];
+                the_sum += switches[i][j];
             }
         }
     }
+    return the_sum;
 }
 
 void displayBoard(bool board[4][4]){
