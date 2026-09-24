@@ -4,13 +4,15 @@
 
 void displayBoard(bool board[4][4]);
 double calculatedSum(bool switches[4][4], double weights[4][4]);
-void learnFrom(bool switches[4][4], double weights[4][4], double learning_rate);
+void adjustWeights(bool switches[4][4], double weights[4][4], double learning_rate, bool positive);
 void closeAllSwitches(double switches[4][4]);
 void makeFirstT(bool switches[4][4]);
 void makeSecondT(bool switches[4][4]);
+void makeFirstJ(bool switches[4][4]);
+void makeSecondJ(bool switches[4][4]);
 
 int main(){
-    double learning_rate = 0.01;
+    double learning_rate = 0.1;
     bool switches[4][4] =  {{false, false, false, false},
                             {false, false, false, false},
                             {false, false, false, false},
@@ -19,8 +21,30 @@ int main(){
                             {0, 0, 0, 0},
                             {0, 0, 0, 0},
                             {0, 0, 0, 0}};
-    
+
+    makeSecondJ(switches);
     displayBoard(switches);
+    adjustWeights(switches, weights, learning_rate, true);
+    std::cout <<calculatedSum(switches, weights);
+}
+
+void makeFirstJ(bool switches[4][4]){
+    switches[0][3] = true;
+    switches[1][3] = true;
+    switches[2][3] = true;
+    switches[3][3] = true;
+    switches[3][2] = true;
+    switches[3][1] = true;
+    switches[2][1] = true;
+}
+void makeSecondJ(bool switches[4][4]){
+    switches[0][2] = true;
+    switches[1][2] = true;
+    switches[2][2] = true;
+    switches[3][2] = true;
+    switches[3][1] = true;
+    switches[3][0] = true;
+    switches[2][0] = true;
 }
 
 void makeSecondT(bool switches[4][4]){
@@ -49,14 +73,26 @@ void closeAllSwitches(double switches[4][4]){
     }
 }
 
-void learnFrom(bool switches[4][4], double weights[4][4], double learning_rate){
-    for(int i = 0; i < 4; i++){
+void adjustWeights(bool switches[4][4], double weights[4][4], double learning_rate, bool positive){
+    if(positive){
+        for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(switches[i][j] == true){
                 weights[i][j] += learning_rate;
                 continue;
             }
             weights[i][j] -= learning_rate;
+            }
+        }
+        return;
+    }
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(switches[i][j] == true){
+                weights[i][j] -= learning_rate;
+                continue;
+            }
+            weights[i][j] += learning_rate;
         }
     }
 }
@@ -66,7 +102,7 @@ double calculatedSum(bool switches[4][4], double weights[4][4]){
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(switches[i][j] == true){
-                the_sum += switches[i][j];
+                the_sum += weights[i][j];
             }
         }
     }
