@@ -1,15 +1,20 @@
 #include <iostream>
 
-//Thanks to welsh labs for writig a fascinating book.
-
-void displayBoard(bool board[4][4]);
-double calculatedSum(bool switches[4][4], double weights[4][4]);
-void adjustWeights(bool switches[4][4], double weights[4][4], double learning_rate, bool positive);
-void closeAllSwitches(double switches[4][4]);
+void displaySwitches(bool switches[4][4]);
+double calculateOutput(bool switches[4][4], double weights[4][4]);
+void adjustWeights(bool switches[4][4], double weights[4][4], double learning_rate, bool learning_positive);
+void closeAllSwitches(bool switches[4][4]);
 void makeFirstT(bool switches[4][4]);
 void makeSecondT(bool switches[4][4]);
 void makeFirstJ(bool switches[4][4]);
 void makeSecondJ(bool switches[4][4]);
+void pseudoClearTerminal();
+void presenceMechanism();
+
+namespace Perceptron{
+    bool learn_positive = true;
+    bool learn_negative = false;
+}
 
 int main(){
     double learning_rate = 0.1;
@@ -21,11 +26,94 @@ int main(){
                             {0, 0, 0, 0},
                             {0, 0, 0, 0},
                             {0, 0, 0, 0}};
+    char choice_layer_one = ' ';
+    int errors = 0;
 
-    makeSecondJ(switches);
-    displayBoard(switches);
-    adjustWeights(switches, weights, learning_rate, true);
-    std::cout <<calculatedSum(switches, weights);
+    while(true){
+        do{
+            if(errors > 0){
+                std::cout <<"Wrong Choice Last Time Pal\n";
+            }
+            std::cout <<"Choices: \n";
+            std::cout <<"1 = See The Switches + The Output\n";
+            std::cout <<"2 = Change Switches\n";
+            std::cout <<"3 = Learn Positively\n";
+            std::cout <<"4 = Learn Negatively\n";
+            std::cin >> choice_layer_one;
+            errors++;
+        }while(choice_layer_one != '1' && choice_layer_one != '2' && choice_layer_one != '3' && choice_layer_one != '4');
+        errors = 0;
+        pseudoClearTerminal();
+
+        switch(choice_layer_one){
+            case '1':
+            {
+                
+                displaySwitches(switches);
+                std::cout <<"Board Output = "<< calculateOutput(switches, weights)<<"\n";
+            }
+            break;
+
+            case '2':
+            {
+                char temp_choice = ' ';
+                do{
+                    std::cout <<"1 = Switch On The First T\n";
+                    std::cout <<"2 = Switch On The Second T\n";
+                    std::cout <<"3 = Switch On the First J\n";
+                    std::cout <<"4 = Switch On the Second J\n";
+                    std::cout <<"5 = Switch Off All Switches\n";
+                    std::cout <<": ";
+                    std::cin >>temp_choice;
+                }while(temp_choice != '1' && temp_choice != '2' && temp_choice != '3' && temp_choice!= '4' && temp_choice != '5');
+
+                switch(temp_choice){
+                    case '1':
+                        makeFirstT(switches);
+                        break;
+                    case '2':
+                        makeSecondT(switches);
+                        break;
+                    case '3':
+                        makeFirstJ(switches);
+                        break;
+                    case '4':
+                        makeSecondJ(switches);
+                        break;
+                    case '5':
+                        closeAllSwitches(switches);
+                        break;
+                }
+            }
+            break;
+
+            case '3':
+                adjustWeights(switches, weights, learning_rate, Perceptron::learn_positive);
+                std::cout <<"Weights Adjusted Positively.";
+                break;
+            
+            case '4':
+                adjustWeights(switches, weights, learning_rate, Perceptron::learn_negative);
+                std::cout <<"Weights Adjusted Negatively.";
+                break;
+        };
+        choice_layer_one = ' ';
+        presenceMechanism();
+    }
+
+}
+
+void presenceMechanism(){
+    std::string useless = " ";
+    std::cout <<"\n\nEnter Anything To Move on\n: ";
+    std::cin >>useless;
+    pseudoClearTerminal();
+}
+
+void pseudoClearTerminal(){
+    for(int i = 0; i < 50; i++){
+        std::cout <<'\n';
+    }
 }
 
 void makeFirstJ(bool switches[4][4]){
@@ -65,7 +153,7 @@ void makeFirstT(bool switches[4][4]){
     switches[3][2] = true;
 }
 
-void closeAllSwitches(double switches[4][4]){
+void closeAllSwitches(bool switches[4][4]){
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             switches[i][j] = false;
@@ -73,8 +161,8 @@ void closeAllSwitches(double switches[4][4]){
     }
 }
 
-void adjustWeights(bool switches[4][4], double weights[4][4], double learning_rate, bool positive){
-    if(positive){
+void adjustWeights(bool switches[4][4], double weights[4][4], double learning_rate, bool learning_positive){
+    if(learning_positive){
         for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(switches[i][j] == true){
@@ -97,7 +185,7 @@ void adjustWeights(bool switches[4][4], double weights[4][4], double learning_ra
     }
 }
 
-double calculatedSum(bool switches[4][4], double weights[4][4]){
+double calculateOutput(bool switches[4][4], double weights[4][4]){
     double the_sum = 0;
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
@@ -109,11 +197,11 @@ double calculatedSum(bool switches[4][4], double weights[4][4]){
     return the_sum;
 }
 
-void displayBoard(bool board[4][4]){
+void displaySwitches(bool switches[4][4]){
 
     for(int row = 0; row < 4; row++){
         for(int column = 0; column < 4; column++){
-            if(board[row][column] == false){
+            if(switches[row][column] == false){
                 std::cout <<"0 ";
                 continue;
             }
