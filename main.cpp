@@ -10,6 +10,8 @@ void makeFirstJ(bool switches[4][4]);
 void makeSecondJ(bool switches[4][4]);
 void pseudoClearTerminal();
 void presenceMechanism();
+void resetWeightsAndSwitches(double weights[4][4], bool switches[4][4]);
+
 
 namespace Perceptron{
     bool learn_positive = true;
@@ -29,6 +31,19 @@ int main(){
     char choice_layer_one = ' ';
     int errors = 0;
 
+    makeFirstT(switches);
+    adjustWeights(switches, weights, learning_rate, Perceptron::learn_positive);
+    closeAllSwitches(switches);
+    makeSecondT(switches);
+    adjustWeights(switches, weights, learning_rate, Perceptron::learn_positive);
+    closeAllSwitches(switches);
+    makeFirstJ(switches);
+    adjustWeights(switches, weights, learning_rate, Perceptron::learn_negative);
+    closeAllSwitches(switches);
+    makeSecondJ(switches);
+    adjustWeights(switches, weights, learning_rate, Perceptron::learn_negative);
+    closeAllSwitches(switches);
+
     while(true){
         do{
             if(errors > 0){
@@ -39,9 +54,12 @@ int main(){
             std::cout <<"2 = Change Switches\n";
             std::cout <<"3 = Learn Positively\n";
             std::cout <<"4 = Learn Negatively\n";
+            std::cout <<"5 = Reset Switches And Weights.\n";
+            std::cout <<"6 = Close The Program.\n";
+            std::cout <<"Choice : ";
             std::cin >> choice_layer_one;
             errors++;
-        }while(choice_layer_one != '1' && choice_layer_one != '2' && choice_layer_one != '3' && choice_layer_one != '4');
+        }while(choice_layer_one != '1' && choice_layer_one != '2' && choice_layer_one != '3' && choice_layer_one != '4' && choice_layer_one != '5');
         errors = 0;
         pseudoClearTerminal();
 
@@ -84,6 +102,8 @@ int main(){
                         closeAllSwitches(switches);
                         break;
                 }
+                pseudoClearTerminal();
+                continue;
             }
             break;
 
@@ -96,11 +116,38 @@ int main(){
                 adjustWeights(switches, weights, learning_rate, Perceptron::learn_negative);
                 std::cout <<"Weights Adjusted Negatively.";
                 break;
+            
+            case '5':
+                resetWeightsAndSwitches(weights, switches);
+                std::cout <<"Resetted all weights and switches.";
+                break;
+            
+            case '6':
+            {
+                char answer = ' ';
+                std::cout <<"\nAre you sure you wanna close the program?\n";
+                std::cout <<"enter 'n' to cancel or anything else to close the program";
+                std::cin >>answer;
+                if(answer == 'n'){
+                    return 0;
+                }
+                continue;
+            }
+                
         };
         choice_layer_one = ' ';
         presenceMechanism();
     }
 
+}
+
+void resetWeightsAndSwitches(double weights[4][4], bool switches[4][4]){
+    closeAllSwitches(switches);
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            weights[i][j] = 0;
+        }
+    }
 }
 
 void presenceMechanism(){
